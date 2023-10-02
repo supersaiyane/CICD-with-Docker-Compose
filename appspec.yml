@@ -1,0 +1,14 @@
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /home/ubuntu/iambatman/pf-entity
+hooks:
+  BeforeInstall:
+    - location: ops-script/before-install
+      timeout: 120
+      runas: root
+  AfterInstall:
+    - location: ops-script/after-install
+      timeout: 300
+      runas: root
