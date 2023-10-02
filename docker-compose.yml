@@ -1,0 +1,85 @@
+networks:
+  network:
+    name: network
+    driver: bridge
+
+volumes:
+  data01:
+    driver: local
+  data02:
+    driver: local
+  data03:
+    driver: local
+  # local_pgdata:
+  pgadmin-data:
+
+services:
+
+  db:
+    image: postgres:15
+    container_name: db
+    restart: always
+    networks:
+      - network
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+            #- ./db.sql:/docker-entrypoint-initdb.d/db.sql
+      - ./data:/var/lib/postgresql/data
+
+  pgadmin:
+    container_name: pgadmin4_container
+    image: dpage/pgadmin4
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    networks:
+      - network
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    environment:
+      - ALLOW_EMPTY_PASSWORD=no
+        # - REDIS_PASSWORD=pf2$17/18#21
+    env_file:
+      - ./.env.redis
+    command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwM
+    volumes:
+      - ./redisdata:/var/lib/redisdata
+    networks:
+      - network
+    restart: always
+
+  keycloak:
+    #image: <account_ID>.dkr.ecr.us-east-2.amazonaws.com/keycloak:latest
+    build:
+      context: ./keycloak
+      dockerfile: Dockerfile
+    container_name: keycloak
+    networks:
+      - network
+    ports:
+      - 8080:8080
+    environment:
+      - KEYCLOAK_ADMIN=webmaster@xyz.com
+      - KEYCLOAK_ADMIN_PASSWORD=Password1!
+      - KC_PROXY=edge
+      - KC_DB_URL=jdbc:postgresql://db:5432/keycloak
+      - KC_DB_USERNAME=postgres
+      - KC_DB_PASSWORD=postgres
+      - KC_HOSTNAME_STRICT=false
+      - KC_HOSTNAME_STRICT_HTTPS=false
+    depends_on:
+      - db
+    restart: always
