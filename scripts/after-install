@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cd /home/ubuntu/iambatman/connector-service
+sh notification-cd.sh
