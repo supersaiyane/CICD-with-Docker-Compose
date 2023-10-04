@@ -86,7 +86,7 @@ services:
     image: <account_id>.dkr.ecr.us-east-2.amazonaws.com/notificationsvc:01
     container_name: notificationsvc
     env_file:
-      - ./.env.auth
+      - ./.env.notificationsvc
     networks:
       - dcanetwork
     ports:
