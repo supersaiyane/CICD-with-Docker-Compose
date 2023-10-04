@@ -1,3 +1,3 @@
 #!/bin/bash
 
-rm -rf /home/ubuntu/Services/notificationsvc/*
+rm -rf /home/ubuntu/Services/PwaApp/*
