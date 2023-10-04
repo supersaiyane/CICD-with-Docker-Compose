@@ -21,4 +21,4 @@ echo $image_number_2
 aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin <account_id>.dkr.ecr.us-east-2.amazonaws.com
 cd /home/ubuntu/Deployment
 docker-compose ps
-docker-compose -f docker-compose.yaml up -d --force-recreate --no-deps dcanotification
+docker-compose -f docker-compose.yaml up -d --force-recreate --no-deps dcaPwaApp
