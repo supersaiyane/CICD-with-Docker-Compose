@@ -82,11 +82,11 @@ services:
       - dcadb
     restart: always
 
-  dcanotification:
-    image: <account_id>.dkr.ecr.us-east-2.amazonaws.com/notificationsvc:01
-    container_name: notificationsvc
+  dcaPwaApp:
+    image: <account_id>.dkr.ecr.us-east-2.amazonaws.com/PwaApp:01
+    container_name: PwaApp
     env_file:
-      - ./.env.notificationsvc
+      - ./.env.PwaApp
     networks:
       - dcanetwork
     ports:
