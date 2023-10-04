@@ -1,4 +1,4 @@
 #!/bin/bash
 
 cd /home/ubuntu/Services/Connectors
-sh notification-cd.sh
+sh PwaApp-cd.sh
