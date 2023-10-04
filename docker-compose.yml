@@ -70,7 +70,7 @@ services:
     ports:
       - 8080:8080
     environment:
-      - KEYCLOAK_ADMIN=webmaster@projectsforce.com
+      - KEYCLOAK_ADMIN=abx@xya.com
       - KEYCLOAK_ADMIN_PASSWORD=Password1!
       - KC_PROXY=edge
       - KC_DB_URL=jdbc:postgresql://dcadb:5432/keycloak
