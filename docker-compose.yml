@@ -1,6 +1,8 @@
+version: '3.7'
+
 networks:
-  network:
-    name: network
+  dcanetwork:
+    name: dcanetwork
     driver: bridge
 
 volumes:
@@ -10,27 +12,25 @@ volumes:
     driver: local
   data03:
     driver: local
-  # local_pgdata:
   pgadmin-data:
 
 services:
 
-  db:
+  dcadb:
     image: postgres:15
-    container_name: db
+    container_name: dcadb
     restart: always
     networks:
-      - network
+      - dcanetwork
     ports:
       - "5432:5432"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     volumes:
-            #- ./db.sql:/docker-entrypoint-initdb.d/db.sql
       - ./data:/var/lib/postgresql/data
 
-  pgadmin:
+  dcapgadmin:
     container_name: pgadmin4_container
     image: dpage/pgadmin4
     restart: unless-stopped
@@ -38,48 +38,62 @@ services:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: root
     networks:
-      - network
+      - dcanetwork
     volumes:
       - pgadmin-data:/var/lib/pgadmin
     ports:
       - "5050:80"
     depends_on:
-      - db
+      - dcadb
 
-  redis:
+  dcaredis:
     image: redis:latest
-    container_name: redis
+    container_name: dcaredis
     environment:
       - ALLOW_EMPTY_PASSWORD=no
-        # - REDIS_PASSWORD=pf2$17/18#21
     env_file:
       - ./.env.redis
-    command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwM
+    command: redis-server --save 20 1 --loglevel warning --requirepass yKVge8oLd2t81
     volumes:
       - ./redisdata:/var/lib/redisdata
     networks:
-      - network
+      - dcanetwork
     restart: always
 
-  keycloak:
-    #image: <account_ID>.dkr.ecr.us-east-2.amazonaws.com/keycloak:latest
+  dcakeycloak:
     build:
       context: ./keycloak
       dockerfile: Dockerfile
-    container_name: keycloak
+    container_name: dcakeycloak
     networks:
-      - network
+      - dcanetwork
     ports:
       - 8080:8080
     environment:
-      - KEYCLOAK_ADMIN=webmaster@xyz.com
+      - KEYCLOAK_ADMIN=webmaster@projectsforce.com
       - KEYCLOAK_ADMIN_PASSWORD=Password1!
       - KC_PROXY=edge
-      - KC_DB_URL=jdbc:postgresql://db:5432/keycloak
+      - KC_DB_URL=jdbc:postgresql://dcadb:5432/keycloak
       - KC_DB_USERNAME=postgres
       - KC_DB_PASSWORD=postgres
       - KC_HOSTNAME_STRICT=false
       - KC_HOSTNAME_STRICT_HTTPS=false
     depends_on:
-      - db
+      - dcadb
     restart: always
+
+  dcanotification:
+    image: <account_id>.dkr.ecr.us-east-2.amazonaws.com/notificationsvc:01
+    container_name: notificationsvc
+    env_file:
+      - ./.env.auth
+    networks:
+      - dcanetwork
+    ports:
+      - 8000:8000
+    environment:
+      - APP_TYPE=service
+    depends_on:
+      - "dcadb"
+      - "dcaredis"
+      - "dcakeycloak"
