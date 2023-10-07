@@ -1,5 +1,5 @@
 # CICD with Docker-Compose and AWS DevOps
-![Visitors](https://vbr.wocr.tk/badge?page_id=cicddc)
+[![GitHub followers](https://img.shields.io/github/followers/supersaiyane?label=Follow&style=social)](https://github.com/supersaiyane/?tab=follow) ![Visitors](https://vbr.wocr.tk/badge?page_id=cicddc)
 ## Components Involved
 * AWS
   * CodeCommit
